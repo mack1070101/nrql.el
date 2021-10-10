@@ -1,3 +1,32 @@
 #+TITLE: nrql.el
 #+STARTUP: overview
 [[http://spacemacs.org][file:https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg]]
+
+nrql.el is a library that offers the ability to run [[https://newrelic.com/][NewRelic]] [[https://docs.newrelic.com/docs/query-your-data/nrql-new-relic-query-language/get-started/introduction-nrql-new-relics-query-language/][NRQL]] (NewRelic
+Query Language) queries from within Emacs.
+
+
+It is currently intended for, and best used, within [[https://orgmode.org/worg/org-contrib/babel/][org-babel]] code blocks
+** Installation
+*** Manual
+1. Clone this repo
+2. Run the following pointed at wherever you cloned this repo to
+#+begin_src elisp
+  (package-install-file "~/code/nrql.el/nrql.el")
+#+end_src
+
+*** TODO MELPA
+Maybe if there is interest
+** Usage
+This package is best used within org-mode. It was developed to make writing
+investigations into tickets by allowing the results of NRQL queries to be easily
+exportable. A typical work flow might look something like the following:
+1. Start investigating a bug in NewRelic
+2. Find the appropriate information, and obtain an NRQL query (either you wrote
+   it, or can sometimes be captured from https://one.newrelic.com UI)
+3. Paste it into an ~nrql~ org-babel block. It can now be run locally on your
+   machine, and have the result exported if properly configured (add ~:exports
+   results~ or ~:exports both~ to your ~nrql~ block's header arguments
+#+begin_src nrql
+  select timestamp, message from Log since 1 minute ago limit 10
+#+end_src
