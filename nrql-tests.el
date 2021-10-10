@@ -22,4 +22,18 @@
 
 ;; Tests for nrql
 ;;; Code:
+(ert-deftest test-nrql-process-hash-table-value ()
+  ;; The instant newrelic sends should be converted to a org-mode timestamp
+  (should (string= "2021-10-03 Sun 20:45:52.383" (nrql-process-hash-table-value "timestamp" 1633319152383)))
+  ;; newlines are replaced with spaces
+  (should (string= "hello there" (nrql-process-hash-table-value "samplekey" "hello\nthere")))
+  ;; pipe is replaced with space because it messes with table styled output
+  (should (string= "hello there" (nrql-process-hash-table-value "samplekey" "hello|there")))
+  ;; Should not process :null from upstream
+  (should (eq :null (nrql-process-hash-table-value "hello" :null)))
+  (should (eq 123 (nrql-process-hash-table-value "some-key" 123)))
+  (should (equal '(123) (nrql-process-hash-table-value "listp-key" '(123))))
+  (should (equal 'false (nrql-process-hash-table-value "bool-key" 'false)))
+  (should (equal nil (nrql-process-hash-table-value "bool-key" '()))))
+
 ;; nrql-tests.el ends here

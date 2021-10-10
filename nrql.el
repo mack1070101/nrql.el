@@ -40,8 +40,16 @@
   "File in which to save token."
   :group 'nrql
   :type 'string)
+
+(defcustom nrql-timestamp-format-string
+  "%Y-%m-%d %a %H:%M:%S.%3N"
+  "Format string for displaying timestamps. Must comply with format-time-string"
+  :group 'nrql
+  :type 'string)
+
 (defun nrql-replace-in-string (replace with in)
   (replace-regexp-in-string (regexp-quote replace) with in nil 'literal))
+
 (defun nrql-get-api-keys (filename)
   "Get locally stored api key and account id. If it doesn't exist, store it"
   (if (file-exists-p filename)
@@ -71,9 +79,17 @@
                   :data (format "{\"query\":  \"{actor {account(id: 721478) {nrql(query: \\\"%s\\\") {results}}}}\" }" query))))))))))
 
 (defun nrql-process-hash-table-value (key value)
-  (if (string= key "timestamp")
-      (format-time-string "[%Y-%m-%d %a %H:%M:%S]" (seconds-to-time (/ value 1000)))
-    value))
+  (cond ((eq :null value) value)
+        ((string= key "timestamp") (format-time-string nrql-timestamp-format-string
+                                                       (time-convert (cons value 1000))))
+        ((number-or-marker-p value) value)
+        ((listp value) value)
+        ((string= (type-of value) "string") (->> value
+                                              (nrql-replace-in-string "\n" " ")
+                                              ;; Pipe characters tend to mess up org-mode tables
+                                              (nrql-replace-in-string "\|" " ")))
+        (value (if value value 'false))
+        t value))
 
 (defun org-babel-execute:nrql (body params)
   "Execute a block of nrql code with org-babel."
