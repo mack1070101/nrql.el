@@ -40,6 +40,8 @@
   "File in which to save token."
   :group 'nrql
   :type 'string)
+(defun nrql-replace-in-string (replace with in)
+  (replace-regexp-in-string (regexp-quote replace) with in nil 'literal))
 (defun nrql-get-api-keys (filename)
   "Get locally stored api key and account id. If it doesn't exist, store it"
   (if (file-exists-p filename)
