@@ -28,7 +28,6 @@
 (require 'json)
 (require 'dash)
 
-(defun make-nrql-query-and-parse (query)
 (defcustom nrql.el-dir
   (concat user-emacs-directory "nrql.el/")
   "File in which to save token."
@@ -64,19 +63,33 @@
                          (api-key (read-string "Please enter your api key: ")))
                       (list account-id api-key))
                   (current-buffer))))))
+
+;; TODO timeseries isn't supported
+;; TODO what happens with more than one query per body
+;; TODO not all functions don't work
+(defun nrql-make-query-and-parse (query)
   "Run a NRQL query on your new-relic account, and parse the successful result"
-  (gethash "results"
-    (gethash "nrql"
-      (gethash "account"
-        (gethash "actor"
-          (gethash "data"
-            (json-parse-string
-              (request-response-data
-                (request "https://api.newrelic.com/graphql"
-                  :type "POST"
-                  :sync t
-                  :headers '(("Content-Type" . "application/json") ("API-Key" . ""))
-                  :data (format "{\"query\":  \"{actor {account(id: 721478) {nrql(query: \\\"%s\\\") {results}}}}\" }" query))))))))))
+  (let* ((api-keys (nrql-get-api-keys nrql-api-keys-file))
+         (cleaned-query (nrql-replace-in-string "\n" " " query))
+         (response (request "https://api.newrelic.com/graphql"
+                    :type "POST"
+                    :sync t
+                    :headers (list '("Content-Type" . "application/json")
+                                   (cons "API-Key" (nth 1 api-keys)))
+                    :data (format "{\"query\":  \"{actor {account(id: %d) {nrql(query: \\\"%s\\\") {results}}}}\"}"
+                                  (car api-keys)
+                                  cleaned-query)))
+         (json-data (json-parse-string (request-response-data response))))
+
+    (if (gethash "errors" json-data)
+        ;; TODO this hashmap behaviour is weird but works
+        (gethash "message" (car (-map (lambda (x) x) (gethash "errors" json-data))))
+        (->> json-data
+             (gethash "data")
+             (gethash "actor")
+             (gethash "account")
+             (gethash "nrql")
+             (gethash "results")))))
 
 (defun nrql-process-hash-table-value (key value)
   (cond ((eq :null value) value)
