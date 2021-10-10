@@ -107,27 +107,49 @@
 (defun org-babel-execute:nrql (body params)
   "Execute a block of nrql code with org-babel."
   (let* ((string body)
-         (select-position (+ 7 (string-match "select" string)))
-         (select-end-position (- (seq-min (-non-nil
-                                           (list (string-match "from" string)
-                                                 (string-match "where" string)))) 1))
-         (query-variables (-map (lambda (str) (string-trim str))
+         ;; Look at the end of the word "select"
+         (select-position (+ (string-match "select" string) 7))
+         (from-position  (string-match "from" string))
+         (where-position (string-match "where" string))
+         (since-position (string-match "since" string))
+         (limit-position (string-match "limit" string))
+
+         ;; Handle both "Select * From Blah" and "From Blah Select *" syntaxes
+         (select-end-position (if (< from-position select-position)
+                                  ;; Take the position of the keyword that is after SELECT
+                                  (seq-min (-filter (lambda (position)
+                                                      (and (not (eq nil position))
+                                                           (> position select-position)))
+                                                    (-non-nil (list from-position
+                                                                    where-position
+                                                                    since-position
+                                                                    limit-position
+                                                                    (length string)))))
+                                  from-position))
+
+         (query-variables (-map (lambda (str)
+                                  (string-trim str))
                                 (split-string (substring string select-position
                                                          select-end-position)
                                               ",")))
-         (nrql-result (make-nrql-query-and-parse body))
+         (nrql-result (nrql-make-query-and-parse body))
+         ;; TODO reorder the delq portion to make functions work
          (variables-to-process (if (string= "*" (car query-variables))
                                    (delq nil (delete-dups
                                               (apply #'append
                                                      (-map (lambda (x) (hash-table-keys x)) nrql-result))))
                                    query-variables)))
 
-    ;; TODO Need to handle the "Add table headers case"
-    (mapcar (lambda (hashtable)
-             (-map (lambda (var)
-                     (nrql-process-hash-table-value var (gethash var hashtable)))
-                   variables-to-process))
-           nrql-result)))
+    ;; Return a table for org-mode or a string if there are an error
+    (if (string= "string" (type-of nrql-result))
+        nrql-result
+        (append (list variables-to-process 'hline)
+                (mapcar (lambda (hashtable)
+                          (-map (lambda (var)
+                                  (nrql-process-hash-table-value var
+                                                                 (gethash var hashtable)))
+                                variables-to-process))
+                        nrql-result)))))
 
 ;; Major mode and font faces
 ;; TODO need to add additional function names
