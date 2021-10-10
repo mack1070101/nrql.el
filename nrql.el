@@ -130,13 +130,14 @@
            nrql-result)))
 
 ;; Major mode and font faces
-;; TODO work on face highlights more, make them also work with uppercase
+;; TODO need to add additional function names
 (setq nrql-highlights
-      '(("select\\|from\\|where\\|since\\|ago\\|limit" . font-lock-function-name-face)
-        ("second\\|minute\\|hour\\|day\\|days\\|max". font-lock-constant-face)
+      '(("select\\|from\\|where\\|and\\|or\\|not\\|like\\|since\\|ago\\|limit\\|facet\\|timeseries\\|with\\|timezone\\|count" . font-lock-function-name-face)
+        ("second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max". font-lock-constant-face)
+        ("\'\\(\\(?:[^\'\\]+\\|\\\\\\(?:.\\|\\)\\)*\\)\'" . font-lock-string-face)
         ("[0-9]+\\([eE][+-]?[0-9]*\\)?" . font-lock-variable-name-face)))
 
-(define-derived-mode nrql-mode fundamental-mode "nrql"
+(define-derived-mode nrql-mode prog-mode "nrql"
   "major mode for editing nrql queries."
-  (setq font-lock-defaults '(nrql-highlights)))
+  (set (make-local-variable 'font-lock-defaults) '(nrql-highlights nil t)))
 ;;; nrql.el ends here
