@@ -29,6 +29,31 @@
 (require 'dash)
 
 (defun make-nrql-query-and-parse (query)
+(defcustom nrql.el-dir
+  (concat user-emacs-directory "nrql.el/")
+  "File in which to save token."
+  :group 'nrql
+  :type 'string)
+
+(defcustom nrql-api-keys-file
+  (expand-file-name ".nrql-el-api-keys.el" nrql.el-dir)
+  "File in which to save token."
+  :group 'nrql
+  :type 'string)
+(defun nrql-get-api-keys (filename)
+  "Get locally stored api key and account id. If it doesn't exist, store it"
+  (if (file-exists-p filename)
+      (with-temp-buffer
+              (insert-file-contents filename)
+              (read (current-buffer)))
+      (progn
+        (if (not (file-directory-p nrql.el-dir)) (make-directory nrql.el-dir))
+        (with-temp-file
+           filename
+           (prin1 (let* ((account-id (read-number "Please enter your account number: "))
+                         (api-key (read-string "Please enter your api key: ")))
+                      (list account-id api-key))
+                  (current-buffer))))))
   "Run a NRQL query on your new-relic account, and parse the successful result"
   (gethash "results"
     (gethash "nrql"
