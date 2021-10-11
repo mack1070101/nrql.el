@@ -153,11 +153,40 @@
 
 ;; Major mode and font faces
 ;; TODO need to add additional function names
+;; TODO improve function name faces
+;; TODO https://docs.newrelic.com/docs/query-your-data/nrql-new-relic-query-language/get-started/nrql-syntax-clauses-functions/
 (setq nrql-highlights
-      '(("select\\|from\\|where\\|and\\|or\\|not\\|like\\|since\\|ago\\|limit\\|facet\\|timeseries\\|with\\|timezone\\|count" . font-lock-function-name-face)
-        ("second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max". font-lock-constant-face)
-        ("\'\\(\\(?:[^\'\\]+\\|\\\\\\(?:.\\|\\)\\)*\\)\'" . font-lock-string-face)
-        ("[0-9]+\\([eE][+-]?[0-9]*\\)?" . font-lock-variable-name-face)))
+      (list
+       (cons (string-join '("select"
+                            "from"
+                            "where"
+                            "and"
+                            "or"
+                            "not"
+                            "like"
+                            "since"
+                            "ago"
+                            "limit"
+                            "facet"
+                            "timeseries"
+                            "with"
+                            "timezone")
+                          "\\|")
+             font-lock-keyword-face)
+       (cons (string-join '("count"
+                            "average"
+                            "max"
+                            "median"
+                            "min"
+                            "mod")
+                          "\\|")
+             font-lock-function-name-face)
+       (cons "second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max"
+             font-lock-constant-face)
+       (cons "\'\\(\\(?:[^\'\\]+\\|\\\\\\(?:.\\|\\)\\)*\\)\'"
+             font-lock-string-face)
+       (cons "[0-9]+\\([eE][+-]?[0-9]*\\)?"
+             font-lock-variable-name-face)))
 
 (define-derived-mode nrql-mode prog-mode "nrql"
   "major mode for editing nrql queries."
