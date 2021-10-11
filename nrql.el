@@ -82,7 +82,7 @@
          (json-data (json-parse-string (request-response-data response))))
 
     (if (gethash "errors" json-data)
-        ;; TODO this hashmap behaviour is weird but works
+        ;; We have to map over errors because it's an array
         (gethash "message" (car (-map (lambda (x) x) (gethash "errors" json-data))))
         (->> json-data
              (gethash "data")
@@ -133,27 +133,30 @@
                                                          select-end-position)
                                               ",")))
          (nrql-result (nrql-make-query-and-parse body))
-         ;; TODO reorder the delq portion to make functions work
-         (variables-to-process (if (string= "*" (car query-variables))
-                                   (delq nil (delete-dups
-                                              (apply #'append
-                                                     (-map (lambda (x) (hash-table-keys x)) nrql-result))))
-                                   query-variables)))
+         (hash-table-variables (delq nil (delete-dups
+                                          (apply #'append
+                                                 (-map (lambda (x) (hash-table-keys x))
+                                                       nrql-result)))))
+         ;; Take the ordering of variables from query-variables, but the names/values from hash-table-variables
+         ;;  if they exist. This gives the most correct feeling ordering for result tables by using the value
+         ;;  from NewRelic but the ordering provided by the user. It makes queries with functions work better
+         (variables-to-process (append (-filter (lambda (x) (member x hash-table-variables)) query-variables)
+                                       (-filter (lambda (x) (not (member x query-variables))) hash-table-variables))))
+
 
     ;; Return a table for org-mode or a string if there are an error
     (if (string= "string" (type-of nrql-result))
         nrql-result
         (append (list variables-to-process 'hline)
-                (mapcar (lambda (hashtable)
-                          (-map (lambda (var)
-                                  (nrql-process-hash-table-value var
-                                                                 (gethash var hashtable)))
-                                variables-to-process))
-                        nrql-result)))))
+                (-map (lambda (hashtable)
+                        (-map (lambda (var)
+                                (nrql-process-hash-table-value var
+                                                               (gethash var hashtable)))
+                              variables-to-process))
+                      nrql-result)))))
 
 ;; Major mode and font faces
 ;; TODO need to add additional function names
-;; TODO improve function name faces
 ;; TODO https://docs.newrelic.com/docs/query-your-data/nrql-new-relic-query-language/get-started/nrql-syntax-clauses-functions/
 (setq nrql-highlights
       (list
