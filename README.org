@@ -27,6 +27,19 @@ exportable. A typical work flow might look something like the following:
 3. Paste it into an ~nrql~ org-babel block. It can now be run locally on your
    machine, and have the result exported if properly configured (add ~:exports
    results~ or ~:exports both~ to your ~nrql~ block's header arguments
-#+begin_src nrql
-  select timestamp, message from Log since 1 minute ago limit 10
-#+end_src
+#+begin_example nrql
+  select timestamp, message from Log where message like '%readiness%' since 1 minute ago limit 10
+#+end_example
+
+| timestamp                   | message                          |
+|-----------------------------+----------------------------------|
+| 2021-10-10 Sun 17:28:47.791 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:47.043 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:46.259 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:46.249 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:46.171 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:45.982 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:45.640 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:45.509 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:45.424 | complete: GET /api/readiness 200 |
+| 2021-10-10 Sun 17:28:45.244 | complete: GET /api/readiness 200 |
