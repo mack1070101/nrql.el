@@ -157,31 +157,78 @@
 
 ;; Major mode and font faces
 ;; TODO need to add additional function names
+;; TODO improve function name faces: highlighted in substrings are highligted
 ;; TODO https://docs.newrelic.com/docs/query-your-data/nrql-new-relic-query-language/get-started/nrql-syntax-clauses-functions/
 (setq nrql-highlights
       (list
        (cons (string-join '("select"
                             "from"
+                            "as"
+                            "compare with"
+                            "exrapolate"
+                            "facet"
+                            "limit"
+                            "offset"
+                            "order by"
+                            "show event types"
+                            "since"
+                            "slide by"
+                            "timeseries"
+                            "until"
                             "where"
+                            "with metric format"
+                            "with timezone"
                             "and"
                             "or"
                             "not"
                             "like"
-                            "since"
                             "ago"
-                            "limit"
-                            "facet"
-                            "timeseries"
-                            "with"
-                            "timezone")
+                            "with")
                           "\\|")
              font-lock-keyword-face)
-       (cons (string-join '("count"
+       (cons (string-join '(;; Simple numerical functions
                             "average"
                             "max"
+                            ;; Aggregator functions
+                            "apdex" ;; TODO apdex doesn't return right
+                            "aggregationendtime"
+                            "buckets"
+                            "bucketPercentile"
+                            "cardinality"
+                            "count"
+                            "derivative"
+                            "dimensions"
+                            "latestrate"
+                            "max"
+                            ;; TODO median doesn't work quite right
                             "median"
                             "min"
-                            "mod")
+                            "minuteOf"
+                            "mod"
+                            "percentage"
+                            ;; TODO percentile doesn't work quite right
+                            "percentile"
+                            "predictLinear"
+                            "rate"
+                            "round"
+                            "stddev"
+                            "stdvar"
+                            "sum"
+                            "uniquesCount"
+                            "uniques"
+                            "capture"
+                            ;; Non Aggregator Functions)
+                            "earliest"
+                            "eventType"
+                            "filter"
+                            "funnel"
+                            "getField"
+                            "histogram"
+                            "keyset"
+                            "latest"
+                            ;; Type conversion
+                            "numeric"
+                            "boolean")
                           "\\|")
              font-lock-function-name-face)
        (cons "second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max"
