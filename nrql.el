@@ -93,8 +93,8 @@
 
 (defun nrql-process-hash-table-value (key value)
   (cond ((eq :null value) value)
-        ((string= key "timestamp") (format-time-string nrql-timestamp-format-string
-                                                       (time-convert (cons value 1000))))
+        ((string-match "time" key) (format-time-string nrql-timestamp-format-string
+                                                   (time-convert (cons value 1000))))
         ((number-or-marker-p value) value)
         ((listp value) value)
         ((string= (type-of value) "string") (->> value
