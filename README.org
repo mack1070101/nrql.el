@@ -185,3 +185,4 @@ the ~nrql.el~ file. However there are a few specific areas that need some focus:
 3. Supporting more features from [[https://docs.newrelic.com/docs/apis/nerdgraph/examples/nerdgraph-nrql-tutorial/][NerdGraph]] like embedded chart URLs for data
    visualization.
 4. Improved readability of function query results involving percentiles.
+5. Improved testing

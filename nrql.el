@@ -47,6 +47,7 @@
   :type 'string)
 
 (defun nrql-replace-in-string (replace with in)
+  "Utility function to replace a value in a string"
   (replace-regexp-in-string (regexp-quote replace) with in nil 'literal))
 
 (defun nrql-get-api-keys (filename)
@@ -65,7 +66,8 @@
                   (current-buffer))))))
 
 ;; TODO timeseries isn't supported
-;; TODO test that all functions can be parsed
+;; TODO embedded charts aren't supported
+;; TODO test that all functions can be parsed proeprly
 (defun nrql-make-query-and-parse (query)
   "Run a NRQL query on your new-relic account, and parse the successful result"
   (let* ((api-keys (nrql-get-api-keys nrql-api-keys-file))
@@ -91,14 +93,23 @@
              (gethash "results")))))
 
 (defun nrql-process-hash-table-value (key value)
+  "Converts the value from a hash-table created from a NewRelic API response
+into something that can be easily read in a result. For example:
+- Converts epoch millis into a human readable timestamp if nrql-timestamp-format-string is
+  properly configured
+- Removes newlines and pipe characters from output as they tend to mess up org-mode tables
+- Pretty format nested hash-tables to be easier to read, and so they don't break the table
+  structure
+"
   (cond ((eq :null value) value)
-        ;; TODO this isn't parsing "seconds" fields like from metrics
+        ;; TODO this isn't parsing "seconds" fields (e.g. beginTimeSeconds) like from metrics
         ((and (string-match "times" key)
               (> value 0)
               (= (ceiling (log10 value)) 13) (format-time-string nrql-timestamp-format-string
                                                        (time-convert (cons value 1000)))))
         ((number-or-marker-p value) value)
         ((listp value) value)
+        ;; Pretty format a hash table to improve how things look in result tables
         ((hash-table-p value) (nrql-pp-hash value))
         ((string= (type-of value) "string") (->> value
                                               (nrql-replace-in-string "\n" " ")
@@ -109,7 +120,7 @@
 
 ;; TODO Can more than one query per block be supported?
 (defun org-babel-execute:nrql (body params)
-  "Execute a block of nrql code with org-babel."
+  "Execute a block of nrql code with org-babel. Currently can only handle one query per block."
   (let* ((string body)
          ;; Look at the end of the word "select"
          (select-position (+ (string-match "select" string) 7))
@@ -193,7 +204,7 @@
                             "average"
                             "max"
                             ;; Aggregator functions
-                            "apdex" ;; TODO apdex doesn't return right
+                            "apdex"
                             "aggregationendtime"
                             "buckets"
                             "bucketPercentile"
@@ -203,13 +214,11 @@
                             "dimensions"
                             "latestrate"
                             "max"
-                            ;; TODO median doesn't work quite right
                             "median"
                             "min"
                             "minuteOf"
                             "mod"
                             "percentage"
-                            ;; TODO percentile doesn't work quite right
                             "percentile"
                             "predictLinear"
                             "rate"
@@ -247,13 +256,14 @@
   (set (make-local-variable 'font-lock-defaults) '(nrql-highlights nil t)))
 
 (defun nrql-pp-hash (table)
+  "Pretty format hash tables to make them easier to read."
   (let ((data (nthcdr 2 (nbutlast
                          (split-string (pp-to-string table) "[()]")
                          2))))
     (princ (concat "(" (car data) ")"))))
 
 (defun nrql-eval-region (start end)
-  "Evaluate the region between start and end"
+  "Evaluate the region between start and end."
   (interactive "r")
   (pp-hash (nrql-make-query-and-parse (apply #'buffer-substring-no-properties (list start end)))))
 ;;; nrql.el ends here
