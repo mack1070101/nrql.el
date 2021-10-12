@@ -94,6 +94,7 @@
   (cond ((eq :null value) value)
         ;; TODO this isn't parsing "seconds" fields like from metrics
         ((and (string-match "times" key)
+              (> value 0)
               (= (ceiling (log10 value)) 13) (format-time-string nrql-timestamp-format-string
                                                        (time-convert (cons value 1000)))))
         ((number-or-marker-p value) value)
