@@ -47,6 +47,27 @@ following:
 | 2021-10-10 Sun 17:28:45.244 | complete: GET /api/readiness 200 |
 ** Sample Queries
 *** Queries Resulting in Tables
+You can also explicitly specify what fields you want to return. Timestamps will
+be parsed to a human readable format by default.
+#+begin_src nrql
+  from Log select timestamp, response_status where response_status is not null
+#+end_src
+
+#+RESULTS:
+| timestamp                   | response_status |
+|-----------------------------+-----------------|
+| 2021-10-11 Mon 21:55:32.005 |             200 |
+| 2021-10-11 Mon 21:55:30.761 |             200 |
+| 2021-10-11 Mon 21:55:30.614 |             200 |
+| 2021-10-11 Mon 21:55:30.563 |             200 |
+| 2021-10-11 Mon 21:55:30.460 |             200 |
+| 2021-10-11 Mon 21:55:30.406 |             200 |
+| 2021-10-11 Mon 21:55:30.324 |             200 |
+| 2021-10-11 Mon 21:55:30.263 |             200 |
+| 2021-10-11 Mon 21:55:30.110 |             200 |
+| 2021-10-11 Mon 21:55:30.082 |             200 |
+
+
 You can run star queries against your transactions.
 #+begin_src nrql
   select * from Transaction limit 9
@@ -66,7 +87,7 @@ You can run star queries against your transactions.
 | 111111 | tacocloud-com | container_id123 | 0.000699507 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.285022 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.509 | 0.000699507 | Filter             | Web             | S             |              200 |                           460 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
 
 
-You can basically query newRelic however you want
+You can basically query newRelic however you want.
 #+begin_src nrql
   SELECT rate(count(`com.taco.createTaco.counter`),1 minute) FROM Metric  WHERE app = 'turo-com-dunlop' TIMESERIES LIMIT 10 SINCE 1 week ago EXTRAPOLATE
 #+end_src
@@ -116,6 +137,7 @@ some examples
 |-------------------------------------------------------+---------+---------+---+-------+---|
 | ("count" 5798595 "f" 5798595 "s" 0 "score" 0.0 "t" 0) | 5798595 | 5798595 | 0 |   0.0 | 0 |
 
+Compute median: the first value returned is the percentile
 #+begin_src nrql
    FROM Log SELECT median(response_status) where response_status is not null since 1 day ago
 #+end_src
@@ -125,6 +147,7 @@ some examples
 |--------------|
 | ("50" 200.0) |
 
+Compute percentile: the first parameter in a pair is the percentile
 #+begin_src nrql
    FROM Log SELECT percentile(response_status, 91, 80) where response_status is not null since 1 day ago
 #+end_src
@@ -134,10 +157,8 @@ some examples
 |----------------------------|
 | ("80" 200.0 "91" 200.0)    |
 
-#+begin_src nrql
-  FROM Log SELECT message, timestamp where request_path is not null
-#+end_src
 
+Compute median:
 #+begin_src nrql :result raw :exports both
    FROM Log SELECT median(response_size)
 #+end_src
@@ -145,10 +166,22 @@ some examples
 #+RESULTS:
 | median       |
 |--------------|
-| (50 192.0) |
+| (50 192.0)   |
+** Customization
+~nrql-timestamp-format-string~ can be used to customize what format times display
+to. Any format must comply with Emacs' [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Time-Parsing.html][format-time-string]] function.
+
+
+~nrql-api-keys-file~ can be used to customize what file api keys are stored
+in.
+
+
+~nrql.el-dir~ can be used to customize what directory api keys are stored in.
 ** Contributions
 Contributions are more than welcome! TODOs are currently being tracked within
 the ~nrql.el~ file. However there are a few specific areas that need some focus:
 1. ~faces~: the faces (how syntax is highlighted) is currently very rudimentary
 2. HTTP Error handling: currently there is no error handling for HTTP errors.
-3.
+3. Supporting more features from [[https://docs.newrelic.com/docs/apis/nerdgraph/examples/nerdgraph-nrql-tutorial/][NerdGraph]] like embedded chart URLs for data
+   visualization.
+4. Improved readability of function query results involving percentiles.
