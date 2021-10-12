@@ -178,6 +178,7 @@
                             "with timezone"
                             "and"
                             "or"
+                            "is"
                             "not"
                             "like"
                             "ago"
@@ -229,7 +230,7 @@
                             "boolean")
                           "\\|")
              font-lock-function-name-face)
-       (cons "second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max"
+       (cons "second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max\\|null"
              font-lock-constant-face)
        (cons "\'\\(\\(?:[^\'\\]+\\|\\\\\\(?:.\\|\\)\\)*\\)\'"
              font-lock-string-face)
