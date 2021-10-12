@@ -65,8 +65,7 @@
                   (current-buffer))))))
 
 ;; TODO timeseries isn't supported
-;; TODO what happens with more than one query per body
-;; TODO not all functions don't work
+;; TODO test that all functions can be parsed
 (defun nrql-make-query-and-parse (query)
   "Run a NRQL query on your new-relic account, and parse the successful result"
   (let* ((api-keys (nrql-get-api-keys nrql-api-keys-file))
@@ -104,6 +103,7 @@
         (value (if value value 'false))
         t value))
 
+;; TODO Can more than one query per block be supported?
 (defun org-babel-execute:nrql (body params)
   "Execute a block of nrql code with org-babel."
   (let* ((string body)
