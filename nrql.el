@@ -92,10 +92,11 @@
 
 (defun nrql-process-hash-table-value (key value)
   (cond ((eq :null value) value)
-        ((string-match "time" key) (format-time-string nrql-timestamp-format-string
-                                                   (time-convert (cons value 1000))))
+        ((and (string-match "times" key) (= (ceiling (log10 value)) 13) (format-time-string nrql-timestamp-format-string
+                                                                                  (time-convert (cons value 1000)))))
         ((number-or-marker-p value) value)
         ((listp value) value)
+        ((hash-table-p value) (nrql-pp-hash value))
         ((string= (type-of value) "string") (->> value
                                               (nrql-replace-in-string "\n" " ")
                                               ;; Pipe characters tend to mess up org-mode tables
