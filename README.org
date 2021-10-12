@@ -63,6 +63,44 @@ You can run star queries against your transactions.
 | 111111 | tacocloud-com | container_id123 | 0.010820628 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.026765 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.514 | 0.010820628 | Filter             | Web             | S             |              200 |                           nil | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
 | 111111 | tacocloud-com | container_id123 | 0.000699507 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.285022 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.509 | 0.000699507 | Filter             | Web             | S             |              200 |                           460 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
 
+
+You can basically query newRelic however you want
+#+begin_src nrql
+  SELECT rate(count(`com.taco.createTaco.counter`),1 minute) FROM Metric  WHERE app = 'turo-com-dunlop' TIMESERIES LIMIT 10 SINCE 1 week ago EXTRAPOLATE
+#+end_src
+
+#+RESULTS:
+| beginTimeSeconds | endTimeSeconds | rate.count.com.taco.createTaco.counter |
+|------------------+----------------+----------------------------------------|
+|       1633407300 |     1633428900 |                      4.352777777777778 |
+|       1633428900 |     1633450500 |                      6.644444444444445 |
+|       1633450500 |     1633472100 |                      7.863888888888889 |
+|       1633472100 |     1633493700 |                      8.272222222222222 |
+|       1633493700 |     1633515300 |                      6.816666666666666 |
+|       1633515300 |     1633536900 |                      6.158333333333333 |
+|       1633536900 |     1633558500 |                     10.519444444444444 |
+|       1633558500 |     1633580100 |                                 11.725 |
+|       1633580100 |     1633601700 |                      4.705555555555556 |
+|       1633601700 |     1633623300 |                      7.386111111111111 |
+|       1633623300 |     1633644900 |                      9.644444444444444 |
+|       1633644900 |     1633666500 |                      8.969444444444445 |
+|       1633666500 |     1633688100 |                      6.411111111111111 |
+|       1633688100 |     1633709700 |                       8.13888888888889 |
+|       1633709700 |     1633731300 |                     11.005555555555556 |
+|       1633731300 |     1633752900 |                      7.386111111111111 |
+|       1633752900 |     1633774500 |                      5.902777777777778 |
+|       1633774500 |     1633796100 |                                  8.625 |
+|       1633796100 |     1633817700 |                                 12.575 |
+|       1633817700 |     1633839300 |                     11.805555555555555 |
+|       1633839300 |     1633860900 |                      9.591666666666667 |
+|       1633860900 |     1633882500 |                     10.555555555555555 |
+|       1633882500 |     1633904100 |                     13.936111111111112 |
+|       1633904100 |     1633925700 |                     14.841666666666667 |
+|       1633925700 |     1633947300 |                                 10.675 |
+|       1633947300 |     1633968900 |                     12.405555555555555 |
+|       1633968900 |     1633990500 |                     11.863888888888889 |
+|       1633990500 |     1634012100 |                                 10.325 |
+
 *** Function Based Queries
 NewRelic supports many types of queries with functions as a parameter. These are
 some examples
