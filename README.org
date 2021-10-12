@@ -6,7 +6,8 @@ nrql.el is a library that offers the ability to run [[https://newrelic.com/][New
 Query Language) queries from within Emacs.
 
 
-It is currently intended for, and best used, within [[https://orgmode.org/worg/org-contrib/babel/][org-babel]] code blocks
+It is currently intended for, and best used, within [[https://orgmode.org/worg/org-contrib/babel/][org-babel]] code blocks. Made
+with [[https://www.google.com/search?hl=en&q=org%2Dmode][org-mode]].
 ** Installation
 *** Manual
 1. Clone this repo
@@ -18,9 +19,10 @@ It is currently intended for, and best used, within [[https://orgmode.org/worg/o
 *** TODO MELPA
 Maybe if there is interest
 ** Usage
-This package is best used within org-mode. It was developed to make writing
-investigations into tickets by allowing the results of NRQL queries to be easily
-exportable. A typical work flow might look something like the following:
+This package is currently best used within [[https://orgmode.org/][org-mode]]. It was developed to make
+writing investigations into tickets by allowing the results of NRQL queries to
+be easily exportable. A typical work flow might look something like the
+following:
 1. Start investigating a bug in NewRelic
 2. Find the appropriate information, and obtain an NRQL query (either you wrote
    it, or can sometimes be captured from https://one.newrelic.com UI)
@@ -144,3 +146,9 @@ some examples
 | median       |
 |--------------|
 | (50 192.0) |
+** Contributions
+Contributions are more than welcome! TODOs are currently being tracked within
+the ~nrql.el~ file. However there are a few specific areas that need some focus:
+1. ~faces~: the faces (how syntax is highlighted) is currently very rudimentary
+2. HTTP Error handling: currently there is no error handling for HTTP errors.
+3.
