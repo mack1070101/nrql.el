@@ -137,15 +137,15 @@
     ;; Return a table for org-mode or a string if there are an error
     (if (string= "string" (type-of nrql-result))
         nrql-result
-      (let* ((hash-table-variables (delq nil (delete-dups)
-                                            (apply #'append
-                                                       (-map (lambda (x) (hash-table-keys x)
-                                                                 nrql-result)))))
+      (let* ((hash-table-variables (delq nil (delete-dups
+                                              (apply #'append
+                                                     (-map (lambda (x) (hash-table-keys x))
+                                                           nrql-result)))))
              ;; Take the ordering of variables from query-variables, but the names/values from hash-table-variables
              ;;  if they exist. This gives the most correct feeling ordering for result tables by using the value
              ;;  from NewRelic but the ordering provided by the user. It makes queries with functions work better
-             (variables-to-process (append (-filter (lambda (x) (member x hash-table-variables)) query-variables
-                                             (-filter (lambda (x) (not (member x query-variables))) hash-table-variables)))))
+             (variables-to-process (append (-filter (lambda (x) (member x hash-table-variables)) query-variables)
+                                           (-filter (lambda (x) (not (member x query-variables))) hash-table-variables))))
         (append (list variables-to-process 'hline)
                 (-map (lambda (hashtable)
                         (-map (lambda (var)
