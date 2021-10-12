@@ -43,3 +43,66 @@ exportable. A typical work flow might look something like the following:
 | 2021-10-10 Sun 17:28:45.509 | complete: GET /api/readiness 200 |
 | 2021-10-10 Sun 17:28:45.424 | complete: GET /api/readiness 200 |
 | 2021-10-10 Sun 17:28:45.244 | complete: GET /api/readiness 200 |
+** Sample Queries
+*** Queries Resulting in Tables
+You can run star queries against your transactions.
+#+begin_src nrql
+  select * from Transaction limit 9
+#+end_src
+
+#+RESULTS:
+|  appId | appName       | containerId     |    duration | entityGuid                                  | error  | host        | name                                                                | port | priority | realAgentId | tags.account | tags.accountId | tags.guid  | tags.trustedAccountId | timestamp                   |   totalTime | transactionSubType | transactionType | apdexPerfZone | httpResponseCode | request.headers.contentLength | request.headers.host                    | request.headers.userAgent                                   | request.method | response.headers.contentType |
+|--------+---------------+-----------------+-------------+---------------------------------------------+--------+-------------+---------------------------------------------------------------------+------+----------+-------------+--------------+----------------+------------+-----------------------+-----------------------------+-------------+--------------------+-----------------+---------------+------------------+-------------------------------+-----------------------------------------+-------------------------------------------------------------+----------------+------------------------------|
+| 111111 | tacocloud-com | container_id123 |  0.04863817 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.886877 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.542 |  0.04863817 | Filter             | Web             | S             |              200 |                           130 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.044141483 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.767033 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.541 | 0.044141483 | Filter             | Web             | S             |              200 |                           131 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 |  3.5762e-05 | entity_456                                  | :false | tacocloud-0 | OtherTransaction/Taco/org.apache.solr.search.TacoIndexSearcher/warm | 8983 |  0.33727 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.540 |  3.5762e-05 | Taco               | Other           | nil           |              nil |                           nil | nil                                     | nil                                                         | nil            | nil                          |
+| 111111 | tacocloud-com | container_id123 |  0.05570143 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 |  0.26771 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.531 |  0.05570143 | Filter             | Web             | S             |              200 |                           130 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.013076241 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.072284 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.529 | 0.013076241 | Filter             | Web             | S             |              200 |                           130 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.001776847 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.785038 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.519 | 0.001776847 | Filter             | Web             | S             |              200 |                           nil | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.014840841 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.286713 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.516 | 0.014840841 | Filter             | Web             | S             |              200 |                           815 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.010820628 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.026765 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.514 | 0.010820628 | Filter             | Web             | S             |              200 |                           nil | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+| 111111 | tacocloud-com | container_id123 | 0.000699507 | entity_456                                  | :false | tacocloud-0 | WebTransaction/Filter/TacoRequestFilter                             | 8983 | 0.285022 |         111 | taco.com     |            999 | entity_456 |                   999 | 2021-10-11 Mon 21:22:38.509 | 0.000699507 | Filter             | Web             | S             |              200 |                           460 | tacocloud-0.tacocloud-hs.tacocloud:8983 | Taco[org.apache.solr.client.solrj.impl.Http2TacoClient] 2.0 | POST           | application/octet-stream     |
+
+*** Function Based Queries
+NewRelic supports many types of queries with functions as a parameter. These are
+some examples
+
+#+begin_src nrql
+  FROM Log SELECT apdex(response_status) since 1 day ago
+#+end_src
+
+#+RESULTS:
+| apdex.response_status                                 |   count |       f | s | score | t |
+|-------------------------------------------------------+---------+---------+---+-------+---|
+| ("count" 5798595 "f" 5798595 "s" 0 "score" 0.0 "t" 0) | 5798595 | 5798595 | 0 |   0.0 | 0 |
+
+#+begin_src nrql
+   FROM Log SELECT median(response_status) where response_status is not null since 1 day ago
+#+end_src
+
+#+RESULTS:
+| median       |
+|--------------|
+| ("50" 200.0) |
+
+#+begin_src nrql
+   FROM Log SELECT percentile(response_status, 91, 80) where response_status is not null since 1 day ago
+#+end_src
+
+#+RESULTS:
+| percentile.response_status |
+|----------------------------|
+| ("80" 200.0 "91" 200.0)    |
+
+#+begin_src nrql
+  FROM Log SELECT message, timestamp where request_path is not null
+#+end_src
+
+#+begin_src nrql :result raw :exports both
+   FROM Log SELECT median(response_size)
+#+end_src
+
+#+RESULTS:
+| median       |
+|--------------|
+| (50 192.0) |
