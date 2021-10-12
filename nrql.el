@@ -240,4 +240,15 @@
 (define-derived-mode nrql-mode prog-mode "nrql"
   "major mode for editing nrql queries."
   (set (make-local-variable 'font-lock-defaults) '(nrql-highlights nil t)))
+
+(defun nrql-pp-hash (table)
+  (let ((data (nthcdr 2 (nbutlast
+                         (split-string (pp-to-string table) "[()]")
+                         2))))
+    (princ (concat "(" (car data) ")"))))
+
+(defun nrql-eval-region (start end)
+  "Evaluate the region between start and end"
+  (interactive "r")
+  (pp-hash (nrql-make-query-and-parse (apply #'buffer-substring-no-properties (list start end)))))
 ;;; nrql.el ends here
