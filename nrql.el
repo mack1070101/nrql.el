@@ -92,8 +92,10 @@
 
 (defun nrql-process-hash-table-value (key value)
   (cond ((eq :null value) value)
-        ((and (string-match "times" key) (= (ceiling (log10 value)) 13) (format-time-string nrql-timestamp-format-string
-                                                                                  (time-convert (cons value 1000)))))
+        ;; TODO this isn't parsing "seconds" fields like from metrics
+        ((and (string-match "times" key)
+              (= (ceiling (log10 value)) 13) (format-time-string nrql-timestamp-format-string
+                                                       (time-convert (cons value 1000)))))
         ((number-or-marker-p value) value)
         ((listp value) value)
         ((hash-table-p value) (nrql-pp-hash value))
@@ -233,6 +235,7 @@
              font-lock-function-name-face)
        (cons "second\\|seconds\\|minutes\\|minute\\|hours\\|hour\\|days\\|day\\|max\\|null"
              font-lock-constant-face)
+       ;; TODO support "`" better
        (cons "\'\\(\\(?:[^\'\\]+\\|\\\\\\(?:.\\|\\)\\)*\\)\'"
              font-lock-string-face)
        (cons "[0-9]+\\([eE][+-]?[0-9]*\\)?"
