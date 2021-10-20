@@ -3,10 +3,9 @@
 ;; Author: Mackenzie Bligh <mackenziebligh@gmail.com>
 
 ;; Keywords: tools
-;; Homepage:
+;; URL: https://github.com/mack1070101/nrql.el
 ;; Version: 0.0.1
-
-;; nrql requires at least GNU Emacs 25.1
+;; Package-Requires: ((emacs "27.1") (dash "2.19.1") (request))
 
 ;; nrql is free software; you can redistribute it and/or modify it
 ;; under the terms of the gnu general public license as published by
@@ -116,7 +115,7 @@ into something that can be easily read in a result. For example:
                                               ;; Pipe characters tend to mess up org-mode tables
                                               (nrql-replace-in-string "\|" " ")))
         (value (if value value 'false))
-        t value))
+        (t value)))
 
 ;; TODO Can more than one query per block be supported?
 (defun org-babel-execute:nrql (body params)
@@ -266,4 +265,6 @@ into something that can be easily read in a result. For example:
   "Evaluate the region between start and end."
   (interactive "r")
   (pp-hash (nrql-make-query-and-parse (apply #'buffer-substring-no-properties (list start end)))))
+
+(provide 'nrql)
 ;;; nrql.el ends here
