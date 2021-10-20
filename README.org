@@ -8,6 +8,9 @@ Query Language) queries from within Emacs.
 
 It is currently intended for, and best used, within [[https://orgmode.org/worg/org-contrib/babel/][org-babel]] code blocks. Made
 with [[https://www.google.com/search?hl=en&q=org%2Dmode][org-mode]].
+
+[[file:demo/nrql.gif]]
+
 ** Installation
 *** Manual
 1. Clone this repo
