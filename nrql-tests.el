@@ -1,5 +1,5 @@
 ;; nrql-tests.el -*- lexical-binding: t; -*-
-;; Copyright (C) 2021 Mackenzie Bligb
+;; Copyright (C) 2021 Mackenzie Bligh
 
 ;; Author: Mackenzie Bligh <mackenziebligh@gmail.com>
 

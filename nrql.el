@@ -115,7 +115,7 @@ into something that can be easily read in a result. For example:
                                               ;; Pipe characters tend to mess up org-mode tables
                                               (nrql-replace-in-string "\|" " ")))
         (value (if value value 'false))
-        t value))
+        (t value)))
 
 ;; TODO Can more than one query per block be supported?
 (defun org-babel-execute:nrql (body params)
